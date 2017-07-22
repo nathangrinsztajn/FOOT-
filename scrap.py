@@ -48,48 +48,6 @@ def purifie(textComparateur):  #renvoit un tableau sous la forme [[equipe1, equi
     return matchs
 
 
-def extrairecote(equipe1, equipe2, date):
-    driver.get("http://www.comparateur-de-cotes.fr")
-    elem = driver.find_elements_by_name("search")[1]
-    elem.clear()
-    elem.send_keys(equipe1)
-    elem.send_keys(Keys.RETURN)
-    texte = driver.find_element_by_id('searchresult').text
-    if texte.split(":")[1] == " 0 équipe(s) et 0 événement(s).":
-        print("Pas de résultats pour " + equipe1)
-    else:
-        elem = driver.find_elements_by_class_name("notfat")
-        print(len(elem))
-        equipesTrouvees = 0
-        while equipesTrouvees < len(elem) and elem[equipesTrouvees].text.find("Football") != -1:
-            equipesTrouvees += 1
-        corps = driver.find_element_by_id('searchresult')
-        elems = corps.find_elements_by_tag_name('ul')[0:equipesTrouvees]
-        matchsTrouvees = [purifie(elems[k].text) for k in range(len(elems))]
-        matchquimatche = [-1, -1]
-        for k in range(len(matchsTrouvees)):
-            for match in range(len(matchsTrouvees[k])):
-                if date == matchsTrouvees[match][2]:
-                    if isequal(matchsTrouvees[match][0], equipe1):
-                        print(matchsTrouvees[match][1] + " " + equipe2)
-                        matchquimatche = [k, match]
-                    elif isequal(matchsTrouvees[match][1], equipe1):
-                        print(matchsTrouvees[match][0] + " " + equipe2)
-                        matchquimatche = [k, match]
-                    elif isequal(matchsTrouvees[match][1], equipe2):
-                        print(matchsTrouvees[match][0] + " " + equipe1)
-                        matchquimatche = [k, match]
-                    elif isequal(matchsTrouvees[match][0], equipe2):
-                        print(matchsTrouvees[match][1] + " " + equipe1)
-                        matchquimatche = [k, match]
-                        # ajouter match du nom de l'équipe manquante + vérification
-        print(matchsTrouvees)
-        if equipesTrouvees == 0:
-            print("Pas de résultat où la date et une équipe concordent")
-        else:
-            lienMatch = elems[k].find_elements_by_tag_name('li')[match].click()
-
-
 def extrairePageFinale(cas):  # format [ [cote1,coten,cote2,"Betclic"],...]
     elem = driver.find_element_by_class_name("bettable")
     elems = elem.find_elements_by_tag_name("tr")[1:]
@@ -123,7 +81,6 @@ def extrairecote2(equipe1, equipe2, date, cur):
         #print(matchsTrouvees)
         for k in range(len(matchsTrouvees)):
             for match in range(len(matchsTrouvees[k])):
-                #if str(date) == str(matchsTrouvees[k][match][2]):
                 if stringToDate(str(date)) - stringToDate(str(matchsTrouvees[k][match][2])) <= datetime.timedelta(minutes=1) and stringToDate(str(date)) - stringToDate(str(matchsTrouvees[k][match][2]))>= datetime.timedelta(minutes = -1) :
                     if isequal(equipe1, matchsTrouvees[k][match][0]):
                         print(matchsTrouvees[k][match][1] + " ; " + equipe2)
