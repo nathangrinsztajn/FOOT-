@@ -48,7 +48,7 @@ Un fichier qui sert simplement à appeler les fonctions de scrap.py.
 ----------
 
 
-###rentabilité.py
+### rentabilité.py
 
 Tests de rentabilité d'algorithmes avec les 250 matchs de la base de donnée. Étrangement, on perd de l'argent quand on parie avec une espérance positive, et on en gagne lorsque l'on prend des paris à priori perdants. 
 
