@@ -1,17 +1,17 @@
-#READ ME
+# READ ME
 
 ----------
 
 
 ----------
 
-##Les fichiers python
+## Les fichiers python
 
 
 ----------
 
 
-###scrap.py
+### scrap.py
 
 Contient les programmes de scap pour fairlay, forbet, et le comparateur de côte. Ils sont décomposés en quatre rubriques, une pour chaque site, et la dernière contenant l'API finale. On y trouve la fonction de scrap définitive de chaque site, ainsi que sa version de test, qui est identique à la différence près que les changements dans la base de données ne sont pas sauvegardés.
 
