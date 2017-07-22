@@ -9,8 +9,10 @@ import scrap
 #driver.implicitly_wait(4)
 
 
+#À exécuter dans l'ordre
+
 scrap.reztest(61)
-print("---- scrapmatch ----")
-scrap.scrapmatchtest(2)
-print("---- ajourcf ----")
-scrap.ajourfctest(2)
+#print("---- scrapmatch ----")
+#scrap.scrapmatchtest(2)
+#print("---- ajourcf ----")
+#scrap.ajourfctest(2)
