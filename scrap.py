@@ -17,7 +17,7 @@ def normalize(txt):
     return txt
 
 
-# cote comparateur
+### cote comparateur ###
 
 def purifie(textComparateur):  #renvoit un tableau sous la forme [[equipe1, equipe2, datetimeMatch]...]
     tabMatchs = textComparateur.split("\n")
@@ -137,7 +137,8 @@ def isequal(e1, e2):
 
 # extrairecote("Arsenal", "Palace", datetime.datetime(2017, 4, 10, hour=21, minute=0))
 
-# extraire fairlay
+
+### extraire fairlay ###
 
 def convertDate(date):  # format 2017-04-15T13:00:00+00:00 en datetime ATTENTION CHANGEMENT D'HEURE
     u = date.split('T')
@@ -145,14 +146,13 @@ def convertDate(date):  # format 2017-04-15T13:00:00+00:00 en datetime ATTENTION
     h = u[1].split(':')
     return datetime.datetime(int(d[0]), int(d[1]), int(d[2]), hour=int(h[0]), minute=int(h[1])) + datetime.timedelta(0,
                                                                                                                      7200,
-                                                                                                                     0)  # attention changement d'heure
+                                                                                                                     0)  # GMT +2 France
 def stringToDate(st):
     a = st.split("-")
     b = a[2].split(":")
     return datetime.datetime(int(a[0]), int(a[1]), int(b[0].split(" ")[0]), hour = int(b[0].split(" ")[1]), minute = int(b[1]))
 
 
-# extraire fairlay
 
 def convert(s):  # notation chiffrée américaine string en float
     if s == '-':
@@ -168,7 +168,7 @@ def convert(s):  # notation chiffrée américaine string en float
             return float(r)
 
 
-def extraireCotefair(jour): #extrait les matchs avec *jour* jours en avance
+def extraireCotefair(jour): #extrait les matchs avec *jour* jours en avance. Forme : [[['Young Boys', 'FC Basel'], datetime.datetime(2017, 7, 22, 19, 0), [[[2.72, 1353.0], ['-']], [['-'], ['-']], [[2.56, 1353.0], ['-']], [['-'], ['-']], [[3.75, 1353.0], ['-']], [['-'], ['-']]], datetime.datetime(2017, 7, 22, 17, 33, 33, 118334)]
     maint = datetime.datetime.today()
     page = 1
     datem = True
@@ -194,14 +194,14 @@ def extraireCotefair(jour): #extrait les matchs avec *jour* jours en avance
                 cotes = [[[convert(i) for i in u] for u in a] for a in cotes]
                 cotef.append([noms, date, cotes, maint])
         page += 1
-    # print(cotef)
+    print(cotef)
     return cotef
 
 
 
 
 
-# les résultats :
+### les résultats ###
 
 def victoire(a, b):
     if a > b:
@@ -285,8 +285,11 @@ def permute(s):
     else:
         return s
 
+### Fonctions Finales ###
 
-def reztest(minu):# nombre de minutes autorisées entre la date de deux matchs condidérés égaux
+#les fonctions avec "test" sont des fonctions qui ne commit pas sur les bases de données. À appeler avant les vraies versions.
+
+def reztest(minu):# nombre de minutes autorisées entre la date de deux matchs condidérés égaux --sans commit
     fichierDonnees = "base.sq3"
     conn = sqlite3.connect(fichierDonnees)
     cur = conn.cursor()
@@ -361,7 +364,6 @@ def rez(minu):
     cur.close()
     conn.close()
 
-#scrap fairlay
 
 def c(couple):
     if len(couple)==1:
@@ -376,7 +378,7 @@ def v(couple):
     else:
         return couple[1]
 
-def scrapmatchtest(jour):
+def scrapmatchtest(jour): #insère le tableau de extraireCoteFair dans les base de données (sans commit)
     fichierDonnees = "base.sq3"
     conn = sqlite3.connect(fichierDonnees)
     cur = conn.cursor()
@@ -401,7 +403,7 @@ def scrapmatchtest(jour):
     print(compteur)
 
 
-def scrapmatch(jour):
+def scrapmatch(jour):#insère le tableau de extraireCoteFair dans les base de données (avec commit)
     fichierDonnees = "base.sq3"
     conn = sqlite3.connect(fichierDonnees)
     cur = conn.cursor()
@@ -469,14 +471,15 @@ def scrap(duree, delai, jours): #scrap pendant %durée heures toutes les %délai
 
 #dans l'ordre, les trucs à faire :
 
-#scrap(5, 10, 3)
 
-reztest(61)
-print("---- scrapmatch ----")
-scrapmatchtest(2)
-print("---- ajourcf ----")
-ajourfctest(2)
+#reztest(61)
+#print("---- scrapmatch ----")
+#scrapmatchtest(2)
+#print("---- ajourcf ----")
+#ajourfctest(2)
 
+
+print( extraireCotefair(1))
 #reprise le 08/07
 
 # à faire : si on trouve pas avec e1 pour ajourfc, on tente e2
