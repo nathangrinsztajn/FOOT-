@@ -469,7 +469,7 @@ def scrap(duree, delai, jours): #scrap pendant %durée heures toutes les %délai
             print(var)
 
 
-#dans l'ordre, les trucs à faire :
+### dans l'ordre, les trucs à faire (dans projetX) ###
 
 
 #reztest(61)
@@ -479,27 +479,14 @@ def scrap(duree, delai, jours): #scrap pendant %durée heures toutes les %délai
 #ajourfctest(2)
 
 
-print( extraireCotefair(1))
-#reprise le 08/07
 
-# à faire : si on trouve pas avec e1 pour ajourfc, on tente e2
+#reprise le 08/07 pour le scrap des match dans la base de données
 
 
 
-#fichierDonnees = "base.sq3"
-#conn = sqlite3.connect(fichierDonnees)
-#cur = conn.cursor()
-#extrairecote('Barcelona', 'Villarreal CF', '2017-05-06 18:30:00', cur)
 
-#ne pas rajouter nom si apparait déjà
-#faire une liste matchs passés
+### à faire : ###
 
-
-
-# def final():
-# remplir table hier
-# enlever hier à matchavenir
-# cote fairlay, comparateur pour matchavenir
-# victoire forbet pour matchhier, vider au fur et à mesure
-# pour les unmatch, rajouter correspondance noms
+# si on trouve pas avec e1 pour ajourfc, on tente e2 dans la barre de recherche
+# ne pas rajouter nom si apparait déjà
 #regarder par exemple (rapide) si incohérence binaire (intérêt de parier sur oui et non simultanément)
