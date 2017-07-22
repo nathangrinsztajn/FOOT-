@@ -48,19 +48,7 @@ def purifie(textComparateur):  #renvoit un tableau sous la forme [[equipe1, equi
     return matchs
 
 
-def extrairePageFinale(cas):  # format [ [cote1,coten,cote2,"Betclic"],...]
-    elem = driver.find_element_by_class_name("bettable")
-    elems = elem.find_elements_by_tag_name("tr")[1:]
-    cote = [u.text.split(" ") for u in elems]
-    for i in range(len(cote)):
-        if cas == 0:
-            cote[i] = [float(cote[i][0]), float(cote[i][1]), float(cote[i][2])]
-        else:
-            cote[i] = [float(cote[i][2]), float(cote[i][1]), float(cote[i][0])]
-    return [[cote[k], elems[k].get_attribute("title").split(" ")[2]] for k in range(len(elems))]
-
-
-def extrairecote2(equipe1, equipe2, date, cur):
+def extrairecote(equipe1, equipe2, date, cur):
     driver.get("http://www.comparateur-de-cotes.fr/comparateur/recherche?" + equipe1)
     texte = driver.find_element_by_id('searchresult').text
     if texte.split(":")[1] == " 0 équipe(s) et 0 événement(s).":
@@ -116,8 +104,20 @@ def extrairecote2(equipe1, equipe2, date, cur):
             print("Pas de résultat où la date et "+ equipe1 +" concordent.")
             return "n"
         else:
-            lienMatch = elems[matchquimatche1].find_elements_by_tag_name('li')[matchquimatche2].find_element_by_tag_name('a').click()
+            lienMatch = elems[matchquimatche1].find_elements_by_tag_name('li')[matchquimatche2].find_element_by_tag_name('a').click() #on clique sur le bon lien
             return (extrairePageFinale(cas))
+
+
+def extrairePageFinale(cas):  # renvoit la page finale du comparateur de cote sous le format [ [cote1 (victoire equi1),coten (partie nulle),cote2 (victoire e2),"Betclic" (nom broker)],...]
+    elem = driver.find_element_by_class_name("bettable")
+    elems = elem.find_elements_by_tag_name("tr")[1:]
+    cote = [u.text.split(" ") for u in elems]
+    for i in range(len(cote)):
+        if cas == 0:
+            cote[i] = [float(cote[i][0]), float(cote[i][1]), float(cote[i][2])]
+        else:
+            cote[i] = [float(cote[i][2]), float(cote[i][1]), float(cote[i][0])]
+    return [[cote[k], elems[k].get_attribute("title").split(" ")[2]] for k in range(len(elems))]
 
 
 def isequal(e1, e2):
@@ -129,15 +129,13 @@ def isequal(e1, e2):
         a = False
         b = False
         if cur.execute("""select COUNT(nomf) from nomfc where nomf = ? and nomc = ?""", [e1, e2]).fetchall()[0][0] >= 1 :
-            #a = (cur.execute("""select nomc from nomfc where nomf = ?""", [e1]).fetchall()[0][0] == e2)
             a = True
         if cur.execute("""select COUNT(nomf) from nomfp where nomf = ? and nomp = ?""", [e1, e2]).fetchall()[0][0] >= 1 :
-            #b = (cur.execute("""select nomp from nomfp where nomf = ?""", [e1]).fetchall()[0][0] == e2)
             b = True
         return a or b
 
 
-# extrairecote2("Arsenal", "Palace", datetime.datetime(2017, 4, 10, hour=21, minute=0))
+# extrairecote("Arsenal", "Palace", datetime.datetime(2017, 4, 10, hour=21, minute=0))
 
 # extraire fairlay
 
@@ -153,7 +151,8 @@ def stringToDate(st):
     b = a[2].split(":")
     return datetime.datetime(int(a[0]), int(a[1]), int(b[0].split(" ")[0]), hour = int(b[0].split(" ")[1]), minute = int(b[1]))
 
-# def extrairefairlay():
+
+# extraire fairlay
 
 def convert(s):  # notation chiffrée américaine string en float
     if s == '-':
@@ -169,7 +168,7 @@ def convert(s):  # notation chiffrée américaine string en float
             return float(r)
 
 
-def extraireCotefair(jour):
+def extraireCotefair(jour): #extrait les matchs avec *jour* jours en avance
     maint = datetime.datetime.today()
     page = 1
     datem = True
@@ -184,7 +183,7 @@ def extraireCotefair(jour):
             noms[0]=noms[0].replace(" (n)", "")
             noms[1] = noms[1].split("\n")[0]
             date = convertDate(i[0].find_elements_by_tag_name("td")[7].get_attribute("data-isodate"))
-            datem = datem and (date - datetime.datetime.today() < datetime.timedelta(jour, 0, 0)) #réglé sur #jours en avance
+            datem = datem and (date - datetime.datetime.today() < datetime.timedelta(jour, 0, 0)) #réglé sur *jour* jours en avance
             if datem:
                 cotes0 = [i[0].find_elements_by_tag_name("td")[2:4], i[0].find_elements_by_tag_name("td")[4:6],
                           i[1].find_elements_by_tag_name("td")[1:3], i[1].find_elements_by_tag_name("td")[3:5],
@@ -199,9 +198,10 @@ def extraireCotefair(jour):
     return cotef
 
 
-#extraireCotefair()
 
-# les résultats
+
+
+# les résultats :
 
 def victoire(a, b):
     if a > b:
@@ -217,7 +217,7 @@ def egaliteSansOrdre(liste1, liste2):
     isequal(liste1[0], liste2[1]) and isequal(liste1[1], liste2[0]))
 
 
-def equalagissantF(t1, t2, cur): #t1 les 2 equipes de fairlay, t2 de Forbet
+def equalagissantF(t1, t2, cur): #t1 les 2 equipes de fairlay, t2 de Forbet : renvoit [bool, int] avec int = 0 si l'ordre est le même, 1 sinon
     e1 = t1[0]
     e2 = t1[1]
     f1 = t2[0]
@@ -249,7 +249,7 @@ def equalagissantF(t1, t2, cur): #t1 les 2 equipes de fairlay, t2 de Forbet
         return [False]
 
 
-def exctractforbet():
+def exctractforbet(): # renvoit un tableau de tous les match de la veille, sous le format précisé en dessous
     driver.get("http://www.forebet.com/en/football-predictions-from-yesterday")
     liste1 = driver.find_elements_by_class_name("tr_1")
     liste0 = driver.find_elements_by_class_name("tr_0")
@@ -361,6 +361,7 @@ def rez(minu):
     cur.close()
     conn.close()
 
+#scrap fairlay
 
 def c(couple):
     if len(couple)==1:
@@ -434,7 +435,7 @@ def ajourfctest(jour):
     matchs = cur.execute("select e1, e2, date from matchavenir where date > ? and date < ? order by date", [now, limite]).fetchall()
     for match in matchs:
         print(match)
-        h = extrairecote2(match[0], match[1], match[2], cur)
+        h = extrairecote(match[0], match[1], match[2], cur)
     diff = cur.execute("select COUNT(nomf) from nomfc").fetchall()[0][0]-av
     print(diff)
 
@@ -447,7 +448,7 @@ def ajourfc(jour):
     cur = conn.cursor()
     matchs = cur.execute("select e1, e2, date from matchavenir where date > ? and date < ? order by date", [now, limite]).fetchall()
     for match in matchs:
-        h = extrairecote2(match[0], match[1], match[2], cur)
+        h = extrairecote(match[0], match[1], match[2], cur)
         if h != "n" and len(h)>0 :
             for cote in h:
                 cur.execute("INSERT into coteSites (dateDuJour, DateMatch, e1, e2, parieur, cote1, coten, cote2) VALUES (?,?,?,?,?,?,?,?)", [now, match[2], match[0], match[1], cote[1], cote[0][0], cote[0][1], cote[0][2]])
@@ -470,33 +471,27 @@ def scrap(duree, delai, jours): #scrap pendant %durée heures toutes les %délai
 
 #scrap(5, 10, 3)
 
-rez(61)
+reztest(61)
 print("---- scrapmatch ----")
 scrapmatchtest(2)
 print("---- ajourcf ----")
-ajourfc(2)
+ajourfctest(2)
 
 #reprise le 08/07
 
 # à faire : si on trouve pas avec e1 pour ajourfc, on tente e2
 
-#regarder par exemple (rapide) si incohérence binaire (intérêt de parier sur oui et non simultanément)
+
 
 #fichierDonnees = "base.sq3"
 #conn = sqlite3.connect(fichierDonnees)
 #cur = conn.cursor()
-#extrairecote2('Barcelona', 'Villarreal CF', '2017-05-06 18:30:00', cur)
+#extrairecote('Barcelona', 'Villarreal CF', '2017-05-06 18:30:00', cur)
 
 #ne pas rajouter nom si apparait déjà
 #faire une liste matchs passés
 
 
-#driver.get("http://www.comparateur-de-cotes.fr/comparateur/recherche?Atletico%20Tucuman")
-#corps = driver.find_element_by_id('searchresult')
-#print(corps.text)
-#elems = corps.find_elements_by_tag_name('ul')[0:1]
-#x = elems[0].find_elements_by_tag_name('li')[0].find_element_by_tag_name('a')
-#x.click()
 
 # def final():
 # remplir table hier
@@ -504,3 +499,4 @@ ajourfc(2)
 # cote fairlay, comparateur pour matchavenir
 # victoire forbet pour matchhier, vider au fur et à mesure
 # pour les unmatch, rajouter correspondance noms
+#regarder par exemple (rapide) si incohérence binaire (intérêt de parier sur oui et non simultanément)

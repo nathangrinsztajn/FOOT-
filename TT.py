@@ -10,6 +10,6 @@ cur.execute('INSERT INTO nomfp(nomf, nomp) VALUES(?,?)', ['Inter Baku (n)', 'Int
 cur.execute('INSERT INTO nomfp(nomf, nomp) VALUES(?,?)', ['VMFD Zalgiris Vilnius', 'VMFD Zalgiris'])
 cur.execute('INSERT INTO nomfp(nomf, nomp) VALUES(?,?)', ['Zilina', 'MSK Zilina'])
 
-conn.commit()
+#conn.commit()
 cur.close()
 conn.close()
