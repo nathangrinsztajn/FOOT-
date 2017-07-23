@@ -60,6 +60,10 @@ Tests de rentabilité d'algorithmes avec les 250 matchs de la base de donnée. �
 
 Les informations relatives aux bases de données, et les codes pour les créer. 
 
+
+----------
+
+
 ### fairscrap.py
 
 Un brouillon :)
