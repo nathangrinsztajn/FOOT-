@@ -13,7 +13,7 @@
 
 ### scrap.py
 
-Contient les programmes de scap pour fairlay, forbet, et le comparateur de côte. Ils sont décomposés en quatre rubriques, une pour chaque site, et la dernière contenant l'API finale. On y trouve la fonction de scrap définitive de chaque site, ainsi que sa version de test, qui est identique à la différence près que les changements dans la base de données ne sont pas sauvegardés.
+Contient les programmes de scrap pour fairlay, forbet, et le comparateur de côte. Ils sont décomposés en quatre rubriques, une pour chaque site, et la dernière contenant l'API finale. On y trouve la fonction de scrap définitive de chaque site, ainsi que sa version de test, qui est identique à la différence près que les changements dans la base de données ne sont pas sauvegardés.
 
  - ajourfc(*jour*) : Regarde les matchs de la base **matchavenir** survenant avant *jour* jours, et rentre dans la base **coteSites** les côtes des différents sites de paris trouvés sur le comparateur
 
